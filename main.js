@@ -17,26 +17,7 @@ const app = http.createServer(function(request,response){
                 const title = 'WELCOME';
                 const data = `node.js !!`;
                 const list = template.list(filelist);
-                const html = `<!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <link rel="icon" href="data:,">
-                    <title>${title}</title>
-                </head>
-                <body>
-                    <h1><a href="/">web</a></h1>
-                    <ol>
-                        ${list}
-                    </ol>
-                    <h2>${title}</h2>
-                    <p>${data}</p>
-                    <a href="/create">create</a>
-                </body>
-                </html>
-                `;
+                const html = template.HTML(title,list,data,`<a href="/create">create</a>`);
                 response.writeHead(200);
                 response.end(html);
             });
@@ -51,31 +32,14 @@ const app = http.createServer(function(request,response){
                         allowedTags:["h1"]
                     });
                     const list = template.list(filelist);
-                    const html = `<!DOCTYPE html>
-                    <html lang="en">
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <link rel="icon" href="data:,">
-                        <title>${sanitizedTitle}</title>
-                    </head>
-                    <body>
-                        <h1><a href="/">web</a></h1>
-                        <ol>
-                            ${list}
-                        </ol>
-                        <h2>${sanitizedTitle}</h2>
-                        <p>${sanitizedDescription}</p>
+                    const html = template.HTML(sanitizedTitle,list,sanitizedDescription,`
                         <a href="/create">create</a>
                         <a href="/update?id=${sanitizedTitle}">update</a>
                         <form action="/delete_process" method="post">
                             <input type="hidden" name="id" value="${sanitizedTitle}">
                             <p><input type="submit" value="delete"></p>
                         </form>
-                    </body>
-                    </html>
-                    `;
+                    `);
                     response.writeHead(200);
                     response.end(html);
                 });
@@ -85,29 +49,13 @@ const app = http.createServer(function(request,response){
         fs.readdir(`./data`,function(error,filelist){
             const title = 'CREATE';
             const list = template.list(filelist);
-            const html = `<!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link rel="icon" href="data:,">
-                <title>${title}</title>
-            </head>
-            <body>
-                <h1><a href="/">web</a></h1>
-                <ol>
-                    ${list}
-                </ol>
-                <h2>${title}</h2>
-                <form action="/create_process" method="post">
-                    <p><input type="text" name="title" placeholder="title"></p>
-                    <p><textarea name="description" placeholder="description"></textarea></p>
-                    <p><input type="submit" value="create"></p>
-                </form>
-            </body>
-            </html>
-            `;
+            const html = template.HTML(title,list,'',`
+            <form action="/create_process" method="post">
+                <p><input type="text" name="title" placeholder="title"></p>
+                <p><textarea name="description" placeholder="description"></textarea></p>
+                <p><input type="submit" value="create"></p>
+            </form>
+            `);
             response.writeHead(200);
             response.end(html);
         });
@@ -131,30 +79,14 @@ const app = http.createServer(function(request,response){
             fs.readFile(`./data/${filtered}`,'utf-8',function(error,data){
                 const title = 'UPDATE';
                 const list = template.list(filelist);
-                const html = `<!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <link rel="icon" href="data:,">
-                    <title>${title}</title>
-                </head>
-                <body>
-                    <h1><a href="/">web</a></h1>
-                    <ol>
-                        ${list}
-                    </ol>
-                    <h2>${title}</h2>
-                    <form action="/update_process" method="post">
-                        <input type="hidden" name="id" value="${queryData.id}">
-                        <p><input type="text" name="title" placeholder="title" value="${queryData.id}"></p>
-                        <p><textarea name="description" placeholder="description">${data}</textarea></p>
-                        <p><input type="submit" value="update"></p>
-                    </form>
-                </body>
-                </html>
-                `;
+                const html = template.HTML(title,list,'',`
+                <form action="/update_process" method="post">
+                    <input type="hidden" name="id" value="${queryData.id}">
+                    <p><input type="text" name="title" placeholder="title" value="${queryData.id}"></p>
+                    <p><textarea name="description" placeholder="description">${data}</textarea></p>
+                    <p><input type="submit" value="update"></p>
+                </form>
+                `);
                 response.writeHead(200);
                 response.end(html);
             });
